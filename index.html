@@ -10,18 +10,38 @@
 
   <!-- Swiper CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
-  
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
   <style>
     input[type="date"]:invalid {
       border-color: #d1d5db;
       background-color: #f3f4f6;
       color: #9ca3af;
     }
+
     .swiper {
       padding-bottom: 20px;
     }
+
     .swiper-slide {
       width: "300px";
+    }
+
+    .time-slot.active {
+      background-color: #2563eb;
+      color: white;
+    }
+
+    .time-slot {
+      display: inline-block;
+      padding: 6px 12px;
+      border: 1px solid #2563eb;
+      border-radius: 6px;
+      margin: 4px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -49,8 +69,8 @@
     </div>
 
     <section class="hero">
-      <h1>Тусламж хэрэгтэй бол бидэнд хандана уу</h1>
-      <p class="lead">Зөвлөгөө, нийтлэл, болон цаг товлох.</p>
+      <h1></h1>
+      <p class="lead"></p>
     </section>
 
     <div class="grid">
@@ -58,19 +78,18 @@
         <div id="articles" class="card">
           <h2 style="margin-top:0">Нийтлэл</h2>
 
-          <!-- Swiper -->
           <div class="swiper articles" style="margin-top:12px">
             <div class="swiper-wrapper">
               <div class="swiper-slide">
                 <div class="article">
-                    <img src="./img/download (1).jpeg" alt="">
+                  <img src="./img/download (1).jpeg" alt="">
                   <h3>Өдрийн стрессийг хэрхэн бууруулах вэ</h3>
                   <p>Бага хугацааны амьсгалын дасгал, завсарлага авах, дасгал хөдөлгөөн.</p>
                 </div>
               </div>
               <div class="swiper-slide">
                 <div class="article">
-                    <img src="./img/download.jpeg" alt="">
+                  <img src="./img/download.jpeg" alt="">
                   <h3>Хамт олонтой харилцах харилцаа</h3>
                   <p>Санаа бодлоо илэрхийлэх, эвтэй харилцахад туслах 5 алхам.</p>
                 </div>
@@ -102,25 +121,42 @@
           </select>
 
           <label for="buleg">Бүлэг</label>
-          <input id="buleg" type="text" placeholder="6.1, 11.2 гэх мэт" />
+          <select id="buleg">
+            <option value="">Бүлэг сонгоно уу</option>
+          </select>
 
-          <label for="name">Таны нэр</label>
+
+          <label for="name">Овог нэр</label>
           <input id="name" type="text" placeholder="Нэр" />
 
           <label for="email">Утасны дугаар</label>
-          <input id="email" type="email" placeholder="" />
+          <input id="email" type="text" placeholder="88888888" />
 
-          <label for="type-1">Уулзалтын төрөл (асуудал)</label>
+          <label for="type-1">Уулзалтын төрөл</label>
           <select id="type-1">
-            <option value="1">Анги хамт олон, гэр бүлтэй холбоотой харилцааны хэлбэр</option>
-            <option value="2">Мэргэжил сонголттой холбоотой асуудал</option>
-            <option value="3">Хүчирхийлэл, дээрэлхэлттэй холбоотой асуудал</option>
-            <option value="4">Хорт зуршил, донтолттой холбоотой асуудал</option>
-            <option value="5">Хувь хүний хөгжилтэй холбоотой асуудал</option>
-            <option value="6">Бусад</option>
+            <option value="Анги хамт олон, гэр бүлтэй холбоотой харилцааны хэлбэр">Анги хамт олон, гэр бүлтэй холбоотой
+              харилцааны хэлбэр</option>
+            <option value="Мэргэжил сонголттой холбоотой асуудал">Мэргэжил сонголттой холбоотой асуудал</option>
+            <option value="Хүчирхийлэл, дээрэлхэлттэй холбоотой асуудал">Хүчирхийлэл, дээрэлхэлттэй холбоотой асуудал
+            </option>
+            <option value="Хорт зуршил, донтолттой холбоотой асуудал">Хорт зуршил, донтолттой холбоотой асуудал</option>
+            <option value="Хувь хүний хөгжилтэй холбоотой асуудал">Хувь хүний хөгжилтэй холбоотой асуудал</option>
+            <option value="Бусад">Бусад</option>
           </select>
 
-          <label for="date">Огноо (Та мягмар, лхагва, баасан гаргуудад цаг товлох боломжтой.)</label>
+
+
+
+          <!-- <select id="type-1">
+            <option value="Харилцааны">Харилцааны асуудал</option>
+            <option value="Мэргэжил сонголт">Мэргэжил сонголт</option>
+            <option value="Хүчирхийлэл">Хүчирхийлэл</option>
+            <option value="Донтолт">Донтолт</option>
+            <option value="Хувь хүний хөгжил">Хувь хүний хөгжил</option>
+            <option value="Бусад">Бусад</option>
+          </select> -->
+
+          <label for="date">Огноо</label>
           <input id="date" type="date" />
 
           <label>Цаг сонгох</label>
@@ -140,112 +176,202 @@
   <!-- Swiper JS -->
   <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 
-  <script>
+  <!-- 🟣 YEAR, NAVBAR, SWIPER, FIREBASE BOOKING -->
+  <script type="module">
+
+
+
+
+    const gradeToGroups = {
+  "1": ["1_1", "1_2", "1_3", "1_4"],
+  "2": ["2_1", "2_2"],
+  "3": ["3_1", "3_2"],
+  "4": ["4_1", "4_2"],
+  "5": ["5_1", "5_2"],
+  "6": ["6_1", "6_2", "6_3"],
+  "7": ["7_1", "7_2"],
+  "8": ["8_1"],
+  "9": ["9_1"],
+  "10": ["10_1", "10_2"],
+  "11": ["11_1", "11_2", "11_3"],
+  "12": ["12_1"]
+};
+
+const gradeSelect = document.getElementById('type');
+const groupSelect = document.getElementById('buleg');
+
+gradeSelect.addEventListener('change', () => {
+  const grade = gradeSelect.value;
+  const groups = gradeToGroups[grade] || [];
+  
+  groupSelect.innerHTML = '<option value="">Бүлэг сонгоно уу</option>';
+  groups.forEach(g => {
+    const opt = document.createElement('option');
+    opt.value = g;
+    opt.textContent = g;
+    groupSelect.appendChild(opt);
+  });
+});
+
+
+
+
+
+
+
+    // ----- YEAR -----
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Hamburger toggle
-    const hamburger = document.getElementById('hamburger');
-    const mobileNav = document.getElementById('mobileNav');
-    hamburger.addEventListener('click', () => {
+    // ----- NAVBAR -----
+    document.getElementById('hamburger').addEventListener('click', () => {
+      const mobileNav = document.getElementById('mobileNav');
       mobileNav.style.display = mobileNav.style.display === 'flex' ? 'none' : 'flex';
     });
 
-    // Swiper initialization
+    // ----- SWIPER -----
     const swiper = new Swiper(".swiper", {
       slidesPerView: 1.2,
       spaceBetween: 12,
-      pagination: {
-        el: ".swiper-pagination",
-        clickable: true,
-      },
+      pagination: { el: ".swiper-pagination", clickable: true },
       breakpoints: {
         640: { slidesPerView: 1.5 },
         768: { slidesPerView: 2 },
-        1024: { slidesPerView: 2.5 },
-      },
+        1024: { slidesPerView: 2.5 }
+      }
     });
 
-    // Booking quick time logic
-    const dateInput = document.getElementById('date');
+    // ----- FIREBASE CONFIG -----
+    const firebaseConfig = {
+      apiKey: "AIzaSyC2-x9AYrAuUtN3lwSYhV-f-003cTvdP6M",
+      authDomain: "indrasetgelzui.firebaseapp.com",
+      databaseURL: "https://indrasetgelzui-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "indrasetgelzui",
+      storageBucket: "indrasetgelzui.firebasestorage.app",
+      messagingSenderId: "546192791621",
+      appId: "1:546192791621:web:5485a7ca0ffd6034346b2c",
+      measurementId: "G-LRJ7F0V4DT"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // ----- ЦАГИЙН СОНГОЛТ -----
     const quickTimes = document.getElementById('quick-times');
 
-    function renderSlots(day) {
-      quickTimes.innerHTML = '';
+    document.getElementById('date').addEventListener('input', async (e) => {
+      const d = new Date(e.target.value);
+      const day = d.getDay();
       let slots = [];
-      if (day === 2) { // Мягмар
-        slots = ["10:00", "11:20"];
-      } else if (day === 3 || day === 5) { // Лхагва, Баасан
-        slots = ["09:00", "10:10", "11:20", "14:00"];
+      let activeDay = true;
+
+      // Зөвхөн Мягмар, Лхагва, Баасан өдөр
+      if (day === 2) slots = ["10:00", "11:20"];
+      else if (day === 3 || day === 5) slots = ["09:00", "10:10", "11:20", "14:00"];
+      else activeDay = false;
+
+      quickTimes.innerHTML = '';
+      if (!activeDay) {
+        quickTimes.innerHTML = `<p style="color:#F7456F">Таны сонгосон өдөр цаг байхгүй байна.</p>`;
+        return;
       }
+
+
+      quickTimes.innerHTML = '';
+
+      // Firestore-оос тухайн өдрийн захиалгуудыг татах
+      const snapshot = await db.collection('bookings').where('date', '==', e.target.value).get();
+      const bookedTimes = snapshot.docs.map(doc => doc.data().time);
+
+      // Цагуудыг харуулах
       slots.forEach(t => {
         const div = document.createElement('div');
         div.className = 'time-slot';
         div.textContent = t;
-        div.onclick = () => {
-          document.querySelectorAll('.time-slot').forEach(x => x.classList.remove('active'));
-          div.classList.add('active');
+
+        // Хэрэв энэ цаг аль хэдийн захиалагдсан бол идэвхгүй болгоно
+        if (bookedTimes.includes(t)) {
+          div.classList.add('disabled');
+          div.textContent = `${t} (захиалагдсан)`;
+        } else {
+          div.onclick = () => {
+            document.querySelectorAll('.time-slot').forEach(x => x.classList.remove('active'));
+            div.classList.add('active');
+          };
         }
+
         quickTimes.appendChild(div);
       });
-    }
-
-    dateInput.addEventListener('input', () => {
-      const d = new Date(dateInput.value);
-      const day = d.getDay(); // 0=Sun,1=Mon,...6=Sat
-      renderSlots(day);
     });
 
-    // Booking button with Google Sheet connection
-    const bookBtn = document.getElementById('bookBtn');
-    const webAppUrl = "https://script.google.com/macros/s/AKfycbyFpZgqu5Zqes4o5PSNosyUH8nDRcNivEh5x3VVJwaBQgn07Qbr9BmcUErwFMh5uA/exec"
+    // ----- ЦАГ ТОВЛОХ -----
+    document.getElementById('bookBtn').addEventListener('click', async () => {
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('email').value.trim();
+      const date = document.getElementById('date').value;
+      const grade = document.getElementById('type').value;
+      const group = document.getElementById('buleg').value.trim();
+      const issue = document.getElementById('type-1').value;
+      const selected = document.querySelector('.time-slot.active');
+      const msg = document.getElementById('bookMsg');
 
-    bookBtn.addEventListener('click', () => {
-  const name = document.getElementById('name').value.trim();
-  const phone = document.getElementById('email').value.trim();
-  const grade = document.getElementById('type').value;
-  const group = document.getElementById('buleg').value.trim();
-  const type = document.getElementById('type-1').value;
-  const date = document.getElementById('date').value;
-  const selected = document.querySelector('.time-slot.active');
-  const msg = document.getElementById('bookMsg');
+      if (!name || !phone || !date || !selected) {
+        msg.style.color = '#b91c1c';
+        msg.textContent = 'Бүх талбаруудыг бөглөнө үү.';
+        return;
+      }
 
-  if (!name || !phone || !date || !selected) {
-    msg.style.color = '#b91c1c';
-    msg.textContent = 'Бүх талбаруудыг бөглөнө үү.';
-    return;
-  }
+      // Давхардсан цаг шалгах
+      const q = await db.collection('bookings')
+        .where('date', '==', date)
+        .where('time', '==', selected.textContent)
+        .get();
 
-  const data = {
-    name,
-    phone,
-    grade,
-    group,
-    type,
-    date,
-    time: selected.textContent
-  };
+      if (!q.empty) {
+        msg.style.color = '#b91c1c';
+        msg.textContent = 'Энэ цаг аль хэдийн захиалагдсан байна.';
+        return;
+      }
 
-  fetch("https://script.google.com/macros/s/AKfycbyFpZgqu5Zqes4o5PSNosyUH8nDRcNivEh5x3VVJwaBQgn07Qbr9BmcUErwFMh5uA/exec", {
-    method: "POST",
-    mode: "cors",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(data)
-  })
-  .then(res => res.json())
-  .then(response => {
-    msg.style.color = '#065f46';
-    msg.textContent = 'Амжилттай илгээгдлээ!';
-    console.log(response);
-  })
-  .catch(err => {
-    msg.style.color = '#b91c1c';
-    msg.textContent = 'Алдаа гарлаа: ' + err.message;
-    console.error(err);
-  });
-});
-
+      // Firestore-д хадгалах
+      try {
+        await db.collection('bookings').add({
+          name, phone, grade, group, issue, date,
+          time: selected.textContent,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        msg.style.color = '#065f46';
+        msg.textContent = `Амжилттай илгээгдлээ: ${date} ${selected.textContent}`;
+      } catch (err) {
+        console.error(err);
+        msg.style.color = '#b91c1c';
+        msg.textContent = 'Алдаа гарлаа. Та дахин оролдоно уу.';
+      }
+    });
   </script>
+
+  <style>
+    .time-slot {
+      display: inline-block;
+      padding: 8px 12px;
+      margin: 4px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .time-slot.active {
+      background-color: #2563eb;
+      color: white;
+    }
+
+    .time-slot.disabled {
+      background-color: #e5e7eb;
+      color: #6b7280;
+      cursor: not-allowed;
+    }
+  </style>
+
 </body>
+
 </html>
