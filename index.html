@@ -197,7 +197,7 @@
 
     // Booking button with Google Sheet connection
     const bookBtn = document.getElementById('bookBtn');
-    const webAppUrl = "https://script.google.com/macros/s/AKfycbzJalGDUNwOl7OBvF-c8tnkSGOl1GOHeIE79Fp__K3e9XLa3VOZvC85Ybp0cvfNmQ/exec"
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbyFpZgqu5Zqes4o5PSNosyUH8nDRcNivEh5x3VVJwaBQgn07Qbr9BmcUErwFMh5uA/exec"
 
     bookBtn.addEventListener('click', () => {
   const name = document.getElementById('name').value.trim();
@@ -225,7 +225,7 @@
     time: selected.textContent
   };
 
-  fetch("https://script.google.com/macros/s/AKfycbzJalGDUNwOl7OBvF-c8tnkSGOl1GOHeIE79Fp__K3e9XLa3VOZvC85Ybp0cvfNmQ/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbyFpZgqu5Zqes4o5PSNosyUH8nDRcNivEh5x3VVJwaBQgn07Qbr9BmcUErwFMh5uA/exec", {
     method: "POST",
     mode: "cors",
     headers: {
