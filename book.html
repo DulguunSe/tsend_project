@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PsychCare — Цаг товлох</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">PC</div>
+        <div>
+          <div style="font-weight:700">PsychCare</div>
+          <div style="font-size:12px;color:var(--muted)">Сэтгэлзүйн дэмжлэг</div>
+        </div>
+      </div>
+      <nav>
+        <a class="navlink" href="index.html">Нийтлэл</a>
+        <a class="navlink" href="book.html">Цаг товлох</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <h1>Онлайн цаг товлол</h1>
+      <p class="lead">Зөвхөн Мягмар (2), Лхагва (3), Баасан (5) өдрүүдэд цаг авах боломжтой.</p>
+    </section>
+
+    <main>
+      <div class="card booking">
+        <h3>Цаг товлох</h3>
+
+        <label for="name">Таны нэр</label>
+        <input id="name" type="text" placeholder="Ж. Дөлгөөн" />
+
+        <label for="class">Анги</label>
+        <select id="class">
+          <option value="">Сонгоно уу</option>
+          <option value="9-р анги">9-р анги</option>
+          <option value="10-р анги">10-р анги</option>
+          <option value="11-р анги">11-р анги</option>
+          <option value="12-р анги">12-р анги</option>
+        </select>
+
+        <label for="consultation">Зөвлөгөөний төрөл</label>
+        <select id="consultation">
+          <option value="">Сонгоно уу</option>
+          <option value="Сэтгэл түгших">Сэтгэл түгших</option>
+          <option value="Суралцах арга">Суралцах арга</option>
+          <option value="Хувь хүний хөгжил">Хувь хүний хөгжил</option>
+        </select>
+
+        <label for="date">Огноо</label>
+        <input id="date" type="date" />
+
+        <label>Цаг</label>
+        <div class="times" id="quick-times"></div>
+
+        <button id="bookBtn" class="primary">Цаг товлох</button>
+        <p id="bookMsg" style="margin-top:8px;font-size:13px"></p>
+      </div>
+    </main>
+
+    <footer>
+      <div class="container" style="padding:12px 20px">© <span id="year"></span> PsychCare</div>
+    </footer>
+  </div>
+
+  <script type="module">
+    import { db } from "./firebase.js";
+    import { ref, push, set } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const quickTimes = document.getElementById('quick-times');
+    const dateInput = document.getElementById('date');
+    const bookBtn = document.getElementById('bookBtn');
+    const msg = document.getElementById('bookMsg');
+
+    // Цагийн тохиргоо
+    const times = {
+      "2": ["10:00-11:00", "11:20-12:20"],
+      "3": ["09:00-10:00","10:10-11:10","11:20-12:20","14:00-15:00"],
+      "5": ["09:00-10:00","10:10-11:10","11:20-12:20","14:00-15:00"]
+    };
+
+    function renderSlots(day){
+      quickTimes.innerHTML = '';
+      if(times[day]){
+        times[day].forEach(t=>{
+          const div=document.createElement('div');
+          div.className='time-slot';
+          div.textContent=t;
+          div.onclick=()=>{
+            document.querySelectorAll('.time-slot').forEach(x=>x.classList.remove('active'));
+            div.classList.add('active');
+          };
+          quickTimes.appendChild(div);
+        });
+      } else {
+        const div=document.createElement('div');
+        div.className='time-slot disabled-day';
+        div.textContent="Энэ өдөр боломжгүй";
+        quickTimes.appendChild(div);
+      }
+    }
+
+    dateInput.addEventListener('change',()=>{
+      const d=new Date(dateInput.value);
+      const day=d.getDay(); // 0=Sun,1=Mon,...6=Sat
+      renderSlots(day);
+    });
+
+    bookBtn.addEventListener('click', ()=>{
+      const name=document.getElementById('name').value.trim();
+      const studentClass=document.getElementById('class').value;
+      const consultation=document.getElementById('consultation').value;
+      const date=document.getElementById('date').value;
+      const selected=document.querySelector('.time-slot.active');
+
+      if(!name||!studentClass||!consultation||!date||!selected){
+        msg.style.color='#b91c1c';
+        msg.textContent='Бүх талбаруудыг бөглөнө үү.';
+        return;
+      }
+
+      const data={
+        name:name,
+        class:studentClass,
+        consultation:consultation,
+        date:date,
+        time:selected.textContent
+      };
+
+      const bookingsRef = ref(db, "bookings");
+      const newBooking = push(bookingsRef);
+      set(newBooking, data)
+        .then(()=>{
+          msg.style.color='#065f46';
+          msg.textContent=`Амжилттай хадгалагдлаа: ${date} ${selected.textContent}`;
+        })
+        .catch(err=>{
+          console.error(err);
+          msg.style.color='#b91c1c';
+          msg.textContent="Алдаа гарлаа!";
+        });
+    });
+  </script>
+</body>
+</html>

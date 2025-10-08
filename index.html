@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="mn">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Бодлийн хөтөч - Сэтгэлзүйн Цаг Товлох</title>
+  <meta name="description" content="Сэтгэлзүйн зөвлөгөө, нийтлэл болон цахим цаг товлолын систем" />
+  <link rel="stylesheet" href="./style.css">
+
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+  
+  <style>
+    input[type="date"]:invalid {
+      border-color: #d1d5db;
+      background-color: #f3f4f6;
+      color: #9ca3af;
+    }
+    .swiper {
+      padding-bottom: 20px;
+    }
+    .swiper-slide {
+      width: "300px";
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo"><img src="./img/indra_logo-removebg-preview.png" alt=""></div>
+      </div>
+      <nav>
+        <a class="navlink" href="#articles">Нийтлэл</a>
+        <a class="navlink" href="#booking">Цаг товлох</a>
+      </nav>
+      <div class="hamburger" id="hamburger">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+    </header>
+
+    <div class="mobile-nav" id="mobileNav">
+      <a href="#articles">Нийтлэл</a>
+      <a href="#booking">Цаг товлох</a>
+    </div>
+
+    <section class="hero">
+      <h1>Тусламж хэрэгтэй бол бидэнд хандана уу</h1>
+      <p class="lead">Зөвлөгөө, нийтлэл, болон цаг товлох.</p>
+    </section>
+
+    <div class="grid">
+      <main>
+        <div id="articles" class="card">
+          <h2 style="margin-top:0">Нийтлэл</h2>
+
+          <!-- Swiper -->
+          <div class="swiper articles" style="margin-top:12px">
+            <div class="swiper-wrapper">
+              <div class="swiper-slide">
+                <div class="article">
+                    <img src="./img/download (1).jpeg" alt="">
+                  <h3>Өдрийн стрессийг хэрхэн бууруулах вэ</h3>
+                  <p>Бага хугацааны амьсгалын дасгал, завсарлага авах, дасгал хөдөлгөөн.</p>
+                </div>
+              </div>
+              <div class="swiper-slide">
+                <div class="article">
+                    <img src="./img/download.jpeg" alt="">
+                  <h3>Хамт олонтой харилцах харилцаа</h3>
+                  <p>Санаа бодлоо илэрхийлэх, эвтэй харилцахад туслах 5 алхам.</p>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-pagination"></div>
+          </div>
+        </div>
+      </main>
+
+      <aside>
+        <div id="booking" class="card booking">
+          <h3>Цаг товлох</h3>
+
+          <label for="type">Анги</label>
+          <select id="type">
+            <option value="1">1 анги</option>
+            <option value="2">2 анги</option>
+            <option value="3">3 анги</option>
+            <option value="4">4 анги</option>
+            <option value="5">5 анги</option>
+            <option value="6">6 анги</option>
+            <option value="7">7 анги</option>
+            <option value="8">8 анги</option>
+            <option value="9">9 анги</option>
+            <option value="10">10 анги</option>
+            <option value="11">11 анги</option>
+            <option value="12">12 анги</option>
+          </select>
+
+          <label for="buleg">Бүлэг</label>
+          <input id="buleg" type="text" placeholder="6.1, 11.2 гэх мэт" />
+
+          <label for="name">Таны нэр</label>
+          <input id="name" type="text" placeholder="Нэр" />
+
+          <label for="email">Утасны дугаар</label>
+          <input id="email" type="email" placeholder="" />
+
+          <label for="type-1">Уулзалтын төрөл (асуудал)</label>
+          <select id="type-1">
+            <option value="1">Анги хамт олон, гэр бүлтэй холбоотой харилцааны хэлбэр</option>
+            <option value="2">Мэргэжил сонголттой холбоотой асуудал</option>
+            <option value="3">Хүчирхийлэл, дээрэлхэлттэй холбоотой асуудал</option>
+            <option value="4">Хорт зуршил, донтолттой холбоотой асуудал</option>
+            <option value="5">Хувь хүний хөгжилтэй холбоотой асуудал</option>
+            <option value="6">Бусад</option>
+          </select>
+
+          <label for="date">Огноо (Та мягмар, лхагва, баасан гаргуудад цаг товлох боломжтой.)</label>
+          <input id="date" type="date" />
+
+          <label>Цаг сонгох</label>
+          <div class="times" id="quick-times"></div>
+
+          <button id="bookBtn" class="primary">Цаг товлох</button>
+          <p id="bookMsg" style="margin-top:8px;color:var(--muted);font-size:13px"></p>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      <div class="container" style="padding:12px 20px">© <span id="year"></span> Indra cyber school</div>
+    </footer>
+  </div>
+
+  <!-- Swiper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Hamburger toggle
+    const hamburger = document.getElementById('hamburger');
+    const mobileNav = document.getElementById('mobileNav');
+    hamburger.addEventListener('click', () => {
+      mobileNav.style.display = mobileNav.style.display === 'flex' ? 'none' : 'flex';
+    });
+
+    // Swiper initialization
+    const swiper = new Swiper(".swiper", {
+      slidesPerView: 1.2,
+      spaceBetween: 12,
+      pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
+      },
+      breakpoints: {
+        640: { slidesPerView: 1.5 },
+        768: { slidesPerView: 2 },
+        1024: { slidesPerView: 2.5 },
+      },
+    });
+
+    // Booking quick time logic
+    const dateInput = document.getElementById('date');
+    const quickTimes = document.getElementById('quick-times');
+
+    function renderSlots(day) {
+      quickTimes.innerHTML = '';
+      let slots = [];
+      if (day === 2) { // Мягмар
+        slots = ["10:00", "11:20"];
+      } else if (day === 3 || day === 5) { // Лхагва, Баасан
+        slots = ["09:00", "10:10", "11:20", "14:00"];
+      }
+      slots.forEach(t => {
+        const div = document.createElement('div');
+        div.className = 'time-slot';
+        div.textContent = t;
+        div.onclick = () => {
+          document.querySelectorAll('.time-slot').forEach(x => x.classList.remove('active'));
+          div.classList.add('active');
+        }
+        quickTimes.appendChild(div);
+      });
+    }
+
+    dateInput.addEventListener('input', () => {
+      const d = new Date(dateInput.value);
+      const day = d.getDay(); // 0=Sun,1=Mon,...6=Sat
+      renderSlots(day);
+    });
+
+    // Booking button with Google Sheet connection
+    const bookBtn = document.getElementById('bookBtn');
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbzJalGDUNwOl7OBvF-c8tnkSGOl1GOHeIE79Fp__K3e9XLa3VOZvC85Ybp0cvfNmQ/exec"
+
+    bookBtn.addEventListener('click', () => {
+  const name = document.getElementById('name').value.trim();
+  const phone = document.getElementById('email').value.trim();
+  const grade = document.getElementById('type').value;
+  const group = document.getElementById('buleg').value.trim();
+  const type = document.getElementById('type-1').value;
+  const date = document.getElementById('date').value;
+  const selected = document.querySelector('.time-slot.active');
+  const msg = document.getElementById('bookMsg');
+
+  if (!name || !phone || !date || !selected) {
+    msg.style.color = '#b91c1c';
+    msg.textContent = 'Бүх талбаруудыг бөглөнө үү.';
+    return;
+  }
+
+  const data = {
+    name,
+    phone,
+    grade,
+    group,
+    type,
+    date,
+    time: selected.textContent
+  };
+
+  fetch("https://script.google.com/macros/s/AKfycbzJalGDUNwOl7OBvF-c8tnkSGOl1GOHeIE79Fp__K3e9XLa3VOZvC85Ybp0cvfNmQ/exec", {
+    method: "POST",
+    mode: "cors",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+  })
+  .then(res => res.json())
+  .then(response => {
+    msg.style.color = '#065f46';
+    msg.textContent = 'Амжилттай илгээгдлээ!';
+    console.log(response);
+  })
+  .catch(err => {
+    msg.style.color = '#b91c1c';
+    msg.textContent = 'Алдаа гарлаа: ' + err.message;
+    console.error(err);
+  });
+});
+
+  </script>
+</body>
+</html>
