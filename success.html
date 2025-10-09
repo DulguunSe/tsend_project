@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Захиалга амжилттай!</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f0f9ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .card {
+      background: white;
+      padding: 32px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 360px;
+      animation: fadeIn 0.6s ease;
+    }
+
+    h2 {
+      color: #15803d;
+      margin-bottom: 8px;
+    }
+
+    .details {
+      margin-top: 20px;
+      text-align: left;
+      font-size: 15px;
+      color: #374151;
+    }
+
+    button {
+      margin-top: 24px;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 18px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Захиалга амжилттай!</h2>
+    <p>Таны бүртгүүлсэн мэдээлэл:</p>
+    <div class="details" id="bookingDetails"></div>
+
+    <button onclick="window.location.href='index.html'">Буцах</button>
+  </div>
+
+  <script>
+    const booking = JSON.parse(localStorage.getItem("latestBooking"));
+
+    if (booking) {
+      document.getElementById("bookingDetails").innerHTML = `
+        <b>Нэр:</b> ${booking.name}<br>
+        <b>Анги:</b> ${booking.grade}<br>
+        <b>Бүлэг:</b> ${booking.group}<br>
+        <b>Утас:</b> ${booking.phone}<br>
+        <b>Сэдэв:</b> ${booking.issue}<br>
+        <b>Огноо:</b> ${booking.date}<br>
+        <b>Цаг:</b> ${booking.time}
+      `;
+    } else {
+      document.getElementById("bookingDetails").innerHTML =
+        "<p>Захиалгын мэдээлэл олдсонгүй.</p>";
+    }
+  </script>
+</body>
+</html>
