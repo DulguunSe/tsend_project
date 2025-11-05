@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Нийтлэл</title>
+  <meta name="description" content="Нийтлэлийн дэлгэрэнгүй" />
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:#f7f7f8; color:#111827; }
+    .container { max-width: 900px; margin: 24px auto; padding: 0 16px; }
+    .back { display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:#2563eb; }
+    .card { background:#fff; border:1px solid #e5e7eb; border-radius:14px; box-shadow: 0 6px 18px rgba(0,0,0,.04); overflow:hidden; }
+    .hero-img { width:100%; height:320px; object-fit:cover; background:#eee; }
+    .content { padding: 20px; }
+    h1 { margin: 10px 0 6px; font-size: 28px; line-height:1.2; }
+    .meta { color:#6b7280; font-size: 14px; margin-bottom: 8px; }
+    .excerpt { color:#374151; margin: 12px 0 18px; }
+    .article-body { line-height: 1.75; color:#111827; }
+    .article-body p { margin: 12px 0; }
+    .article-body h2, .article-body h3 { margin: 18px 0 8px; }
+    .grid { display:grid; gap:14px; grid-template-columns: repeat(1, minmax(0, 1fr)); }
+    @media (min-width:768px){ .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    .rec-card { display:block; text-decoration:none; color:inherit; border:1px solid #e5e7eb; border-radius:12px; overflow:hidden; background:#fff; }
+    .rec-card img { width:100%; height:140px; object-fit:cover; }
+    .rec-card h4 { font-size:16px; margin:8px 10px 6px; }
+    .rec-card p { font-size:13px; color:#6b7280; margin:0 10px 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="index.html#articles" class="back">← Буцах</a>
+
+    <div class="card" id="articleCard" style="margin-top:14px;">
+      <img id="hero" class="hero-img" alt="">
+      <div class="content">
+        <h1 id="title">(Ачааллаж байна...)</h1>
+        <div class="meta" id="meta"></div>
+        <div class="excerpt" id="excerpt"></div>
+        <div class="article-body" id="body"></div>
+      </div>
+    </div>
+
+    <div style="margin-top:18px;">
+      <h3 style="margin:6px 2px 10px;">Холбоотой нийтлэлүүд</h3>
+      <div class="grid" id="related"></div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- Firebase ----------
+    const firebaseConfig = {
+      apiKey: "AIzaSyC2-x9AYrAuUtN3lwSYhV-f-003cTvdP6M",
+      authDomain: "indrasetgelzui.firebaseapp.com",
+      databaseURL: "https://indrasetgelzui-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "indrasetgelzui",
+      storageBucket: "indrasetgelzui.appspot.com",
+      messagingSenderId: "546192791621",
+      appId: "1:546192791621:web:5485a7ca0ffd6034346b2c",
+      measurementId: "G-LRJ7F0V4DT"
+    };
+    if (!firebase.apps?.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const $ = (id)=>document.getElementById(id);
+
+    function fmt(ts){
+      try{
+        const d = ts?.toDate ? ts.toDate() : (ts?.seconds ? new Date(ts.seconds*1000) : null);
+        return d ? d.toLocaleDateString('mn-MN', {year:'numeric', month:'long', day:'numeric'}) : '';
+      }catch{ return ''; }
+    }
+
+    function estReadingMinutes(html){
+      const text = (html||'').replace(/<[^>]*>/g,' ').trim();
+      const words = text.split(/\s+/).filter(Boolean).length;
+      return Math.max(1, Math.round(words/200)); // ~200 wpm
+    }
+
+    async function getArticleByParams(){
+      const params = new URLSearchParams(location.search);
+      const slug = params.get('slug');
+      const id = params.get('id');
+      if (id) {
+        const doc = await db.collection('articles').doc(id).get();
+        return doc.exists ? { id: doc.id, ...doc.data() } : null;
+      }
+      if (slug) {
+        const snap = await db.collection('articles')
+          .where('slug','==', slug).limit(1).get();
+        if (!snap.empty) {
+          const d = snap.docs[0]; return { id: d.id, ...d.data() };
+        }
+      }
+      return null;
+    }
+
+    async function loadRelated(currentId){
+      const box = $('related');
+      box.innerHTML = '';
+      let docs = [];
+      try{
+        const snap = await db.collection('articles')
+          .where('published','==',true)
+          .orderBy('createdAt','desc')
+          .limit(6).get();
+        docs = snap.docs.map(d=>({id:d.id, ...d.data()}));
+      }catch(err){
+        const snap = await db.collection('articles')
+          .where('published','==',true).get();
+        docs = snap.docs.map(d=>({id:d.id, ...d.data()}));
+        docs.sort((a,b)=>{
+          const ta = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt?.seconds ? a.createdAt.seconds*1000 : 0);
+          const tb = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt?.seconds ? b.createdAt.seconds*1000 : 0);
+          return tb - ta;
+        });
+        docs = docs.slice(0,6);
+      }
+      docs.filter(d=>d.id!==currentId).slice(0,4).forEach(d=>{
+        const href = `article.html?${d.slug ? ('slug='+encodeURIComponent(d.slug)) : ('id='+d.id)}`;
+        const card = document.createElement('a');
+        card.className = 'rec-card';
+        card.href = href;
+        card.innerHTML = `
+          <img src="${d.imageUrl || 'https://placehold.co/600x360?text=Article'}" alt="">
+          <h4>${d.title || '(Гарчиггүй)'}</h4>
+          <p>${d.excerpt || ''}</p>
+        `;
+        box.appendChild(card);
+      });
+    }
+
+    (async function init(){
+      const art = await getArticleByParams();
+      if (!art) {
+        $('title').textContent = 'Нийтлэл олдсонгүй';
+        $('meta').textContent = 'Алдаа: хайсан нийтлэл олдсонгүй.';
+        $('excerpt').textContent = '';
+        $('body').innerHTML = '';
+        $('hero').style.display='none';
+        return;
+      }
+
+      $('title').textContent = art.title || '(Гарчиггүй)';
+      $('excerpt').textContent = art.excerpt || '';
+      $('meta').textContent = [fmt(art.createdAt), `${estReadingMinutes(art.contentHTML||art.excerpt||'')} мин уншина`]
+        .filter(Boolean).join(' · ');
+      $('hero').src = art.imageUrl || 'https://placehold.co/1200x600?text=Article';
+      $('body').innerHTML = art.contentHTML || '';
+
+      // Холбоотой нийтлэл
+      loadRelated(art.id);
+    })();
+  </script>
+</body>
+</html>

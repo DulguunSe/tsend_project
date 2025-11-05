@@ -22,19 +22,37 @@
       color: #9ca3af;
     }
 
+    /* Swiper */
     .swiper {
       padding-bottom: 20px;
     }
 
-    .swiper-slide {
-      width: "300px";
+    .swiper.articles .swiper-wrapper {
+      align-items: stretch;
     }
 
-    .time-slot.active {
-      background-color: #2563eb;
-      color: white;
+    .swiper.articles .swiper-slide {
+      width: 320px;
+      /* тогтвортой картын өргөн */
+      max-width: 100%;
+      display: block;
     }
 
+    /* том дэлгэц дээр арай өргөн карт */
+    @media (min-width: 1024px) {
+      .swiper.articles .swiper-slide {
+        width: 320px;
+      }
+    }
+
+    /* карт өөрөө слайдынхаа хэмжээг дүүргэнэ */
+    .article-card {
+      width: 100%;
+    }
+
+    /* өргөнийг Swiper өөрөө тооцно */
+
+    /* Time slots */
     .time-slot {
       display: inline-block;
       padding: 6px 12px;
@@ -44,26 +62,77 @@
       cursor: pointer;
     }
 
-    /* ✅ Toast animation style */
+    .time-slot.active {
+      background-color: #2563eb;
+      color: #fff;
+    }
+
+    .time-slot.disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    /* Toast */
     .toast {
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%) scale(0.9);
       background-color: #16a34a;
-      color: white;
+      color: #fff;
       padding: 16px 28px;
       border-radius: 8px;
       font-size: 18px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, .2);
       opacity: 0;
       z-index: 9999;
-      transition: all 0.4s ease;
+      transition: all .4s ease;
     }
 
     .toast.show {
       opacity: 1;
       transform: translate(-50%, -50%) scale(1);
+    }
+
+    /* Article card */
+    .article-card {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      background: #fff;
+      text-decoration: none;
+      color: inherit;
+      transition: transform .15s, box-shadow .15s;
+    }
+
+    .article-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, .08);
+    }
+
+    .article {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .article img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .article h3 {
+      margin: 10px 0 6px;
+    }
+
+    .muted {
+      color: #6b7280;
+      font-size: 13px;
     }
   </style>
 </head>
@@ -101,24 +170,12 @@
           <h2 style="margin-top:0">Нийтлэл</h2>
 
           <div class="swiper articles" style="margin-top:12px">
-            <div class="swiper-wrapper">
-              <div class="swiper-slide">
-                <div class="article">
-                  <img src="./img/download (1).jpeg" alt="">
-                  <h3>Өдрийн стрессийг хэрхэн бууруулах вэ</h3>
-                  <p>Бага хугацааны амьсгалын дасгал, завсарлага авах, дасгал хөдөлгөөн.</p>
-                </div>
-              </div>
-              <div class="swiper-slide">
-                <div class="article">
-                  <img src="./img/download.jpeg" alt="">
-                  <h3>Хамт олонтой харилцах харилцаа</h3>
-                  <p>Санаа бодлоо илэрхийлэх, эвтэй харилцахад туслах 5 алхам.</p>
-                </div>
-              </div>
-            </div>
+            <div class="swiper-wrapper" id="articlesWrapper"><!-- Firestore-оос динамикаар бөглөнө --></div>
             <div class="swiper-pagination"></div>
           </div>
+
+          <p id="articlesEmpty" class="muted" style="display:none; margin-top:8px">Нийтэлсэн нийтлэл хараахан алга
+            байна.</p>
         </div>
       </main>
 
@@ -155,9 +212,11 @@
 
           <label for="type-1">Уулзалтын төрөл</label>
           <select id="type-1">
-            <option value="Анги хамт олон, гэр бүлтэй холбоотой харилцааны хэлбэр">Анги хамт олон, гэр бүлтэй холбоотой харилцааны хэлбэр</option>
+            <option value="Анги хамт олон, гэр бүлтэй холбоотой харилцааны хэлбэр">Анги хамт олон, гэр бүлтэй холбоотой
+              харилцааны хэлбэр</option>
             <option value="Мэргэжил сонголттой холбоотой асуудал">Мэргэжил сонголттой холбоотой асуудал</option>
-            <option value="Хүчирхийлэл, дээрэлхэлттэй холбоотой асуудал">Хүчирхийлэл, дээрэлхэлттэй холбоотой асуудал</option>
+            <option value="Хүчирхийлэл, дээрэлхэлттэй холбоотой асуудал">Хүчирхийлэл, дээрэлхэлттэй холбоотой асуудал
+            </option>
             <option value="Хорт зуршил, донтолттой холбоотой асуудал">Хорт зуршил, донтолттой холбоотой асуудал</option>
             <option value="Хувь хүний хөгжилтэй холбоотой асуудал">Хувь хүний хөгжилтэй холбоотой асуудал</option>
             <option value="Бусад">Бусад</option>
@@ -180,103 +239,140 @@
     </footer>
   </div>
 
-  <!-- ✅ Toast элемент -->
-  <div id="successToast" class="toast">✅ Цаг амжилттай захиалагдлаа!</div>
-
-
-<!-- 
-  <script type="module" src="firebase-config.js"></script>
-  <script type="module" src="app.js"></script> -->
+  <div id="successToast" class="toast">Цаг амжилттай захиалагдлаа!</div>
 
   <!-- Swiper JS -->
   <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 
   <script type="module">
+    // Groups
     const gradeToGroups = {
-      "1": ["1_1", "1_2", "1_3", "1_4"],
-      "2": ["2_1", "2_2"],
-      "3": ["3_1", "3_2"],
-      "4": ["4_1", "4_2"],
-      "5": ["5_1", "5_2"],
-      "6": ["6_1", "6_2", "6_3"],
-      "7": ["7_1", "7_2"],
-      "8": ["8_1"],
-      "9": ["9_1"],
-      "10": ["10_1", "10_2"],
-      "11": ["11_1", "11_2", "11_3"],
-      "12": ["12_1"]
+      "1": ["1_1", "1_2", "1_3", "1_4"], "2": ["2_1", "2_2"], "3": ["3_1", "3_2"], "4": ["4_1", "4_2"],
+      "5": ["5_1", "5_2"], "6": ["6_1", "6_2", "6_3"], "7": ["7_1", "7_2"], "8": ["8_1"], "9": ["9_1"],
+      "10": ["10_1", "10_2"], "11": ["11_1", "11_2", "11_3"], "12": ["12_1"]
     };
-
     const gradeSelect = document.getElementById('type');
     const groupSelect = document.getElementById('buleg');
-
     gradeSelect.addEventListener('change', () => {
-      const grade = gradeSelect.value;
-      const groups = gradeToGroups[grade] || [];
+      const groups = gradeToGroups[gradeSelect.value] || [];
       groupSelect.innerHTML = '<option value="">Бүлэг сонгоно уу</option>';
       groups.forEach(g => {
         const opt = document.createElement('option');
-        opt.value = g;
-        opt.textContent = g;
+        opt.value = g; opt.textContent = g;
         groupSelect.appendChild(opt);
       });
     });
 
     document.getElementById('year').textContent = new Date().getFullYear();
-
     document.getElementById('hamburger').addEventListener('click', () => {
       const mobileNav = document.getElementById('mobileNav');
       mobileNav.style.display = mobileNav.style.display === 'flex' ? 'none' : 'flex';
     });
 
-    const swiper = new Swiper(".swiper", {
-      slidesPerView: 1.2,
-      spaceBetween: 12,
-      pagination: { el: ".swiper-pagination", clickable: true },
-      breakpoints: { 640: { slidesPerView: 1.5 }, 768: { slidesPerView: 2 }, 1024: { slidesPerView: 2.5 } }
-    });
-
+    // Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyC2-x9AYrAuUtN3lwSYhV-f-003cTvdP6M",
       authDomain: "indrasetgelzui.firebaseapp.com",
       databaseURL: "https://indrasetgelzui-default-rtdb.asia-southeast1.firebasedatabase.app",
       projectId: "indrasetgelzui",
-      storageBucket: "indrasetgelzui.firebasestorage.app",
+      storageBucket: "indrasetgelzui.appspot.com",
       messagingSenderId: "546192791621",
       appId: "1:546192791621:web:5485a7ca0ffd6034346b2c",
       measurementId: "G-LRJ7F0V4DT"
     };
-
-    firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
+    // Articles -> Swiper
+    const wrapper = document.getElementById('articlesWrapper');
+    const emptyHint = document.getElementById('articlesEmpty');
+
+    function buildSlide({ id, slug, imageUrl, title, excerpt }) {
+      const href = `article.html?${slug ? ('slug=' + encodeURIComponent(slug)) : ('id=' + id)}`;
+      const slide = document.createElement('div');
+      slide.className = 'swiper-slide';
+      slide.innerHTML = `
+        <a class="article-card" href="${href}">
+          <div class="article">
+            <img src="${imageUrl || 'https://placehold.co/600x360?text=Article'}" alt="">
+            <h3>${title || '(Гарчиггүй)'}</h3>
+            <p class="muted" style="line-height:1.4">${excerpt || ''}</p>
+            <div class="muted" style="margin-top:8px">Дэлгэрэнгүй унших →</div>
+          </div>
+        </a>`;
+      return slide;
+    }
+
+    async function loadArticlesToSwiper() {
+      wrapper.innerHTML = '';
+      let docs = [];
+      try {
+        const snap = await db.collection('articles')
+          .where('published', '==', true)
+          .orderBy('createdAt', 'desc')
+          .limit(12).get();
+        docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      } catch (err) {
+        console.warn('Composite index not ready, using fallback.', err);
+        const snap = await db.collection('articles').where('published', '==', true).get();
+        docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        docs.sort((a, b) => {
+          const ta = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt?.seconds ? a.createdAt.seconds * 1000 : 0);
+          const tb = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt?.seconds ? b.createdAt.seconds * 1000 : 0);
+          return tb - ta;
+        });
+        docs = docs.slice(0, 12);
+      }
+
+      if (!docs.length) {
+        emptyHint.style.display = 'block';
+      } else {
+        emptyHint.style.display = 'none';
+        docs.forEach(d => {
+          wrapper.appendChild(buildSlide({
+            id: d.id, slug: d.slug, imageUrl: d.imageUrl, title: d.title, excerpt: d.excerpt
+          }));
+        });
+      }
+
+new Swiper(".swiper.articles", {
+  slidesPerView: 'auto',   // карт бүр тогтмол өргөнтэй тул auto-р эгнээ болно
+  spaceBetween: 16,
+  grabCursor: true,
+  pagination: { el: ".swiper-pagination", clickable: true },
+  breakpoints: {
+    640:  { spaceBetween: 16 },
+    1024: { spaceBetween: 20 },
+    1536: { spaceBetween: 24 }
+  }
+});
+
+    }
+    loadArticlesToSwiper();
+
+    // Booking
     const quickTimes = document.getElementById('quick-times');
+
     document.getElementById('date').addEventListener('input', async (e) => {
       const d = new Date(e.target.value);
       const day = d.getDay();
-      let slots = [];
-      let activeDay = true;
+      let slots = []; let activeDay = true;
 
       if (day === 2) slots = ["10:00", "11:20"];
       else if (day === 3 || day === 5) slots = ["09:00", "10:10", "11:20", "14:00"];
       else activeDay = false;
 
       quickTimes.innerHTML = '';
-      if (!activeDay) {
-        quickTimes.innerHTML = `<p style="color:#F7456F">Таны сонгосон өдөр цаг байхгүй байна.</p>`;
-        return;
-      }
+      if (!activeDay) { quickTimes.innerHTML = `<p style="color:#F7456F">Таны сонгосон өдөр цаг байхгүй байна.</p>`; return; }
 
       const snapshot = await db.collection('bookings').where('date', '==', e.target.value).get();
       const bookedTimes = snapshot.docs.map(doc => doc.data().time);
 
       slots.forEach(t => {
         const div = document.createElement('div');
-        div.className = 'time-slot';
-        div.textContent = t;
+        div.className = 'time-slot'; div.textContent = t;
         if (bookedTimes.includes(t)) {
-          div.classList.add('disabled');
-          div.textContent = `${t} (захиалагдсан)`;
+          div.classList.add('disabled'); div.textContent = `${t} (захиалагдсан)`;
         } else {
           div.onclick = () => {
             document.querySelectorAll('.time-slot').forEach(x => x.classList.remove('active'));
@@ -287,90 +383,45 @@
       });
     });
 
-   
     document.getElementById('bookBtn').addEventListener('click', async () => {
-  const name = document.getElementById('name').value.trim();
-  const phone = document.getElementById('email').value.trim();
-  const date = document.getElementById('date').value;
-  const grade = document.getElementById('type').value;
-  const group = document.getElementById('buleg').value.trim();
-  const issue = document.getElementById('type-1').value;
-  const selected = document.querySelector('.time-slot.active');
-  const msg = document.getElementById('bookMsg');
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('email').value.trim();
+      const date = document.getElementById('date').value;
+      const grade = document.getElementById('type').value;
+      const group = document.getElementById('buleg').value.trim();
+      const issue = document.getElementById('type-1').value;
+      const selected = document.querySelector('.time-slot.active');
+      const msg = document.getElementById('bookMsg');
 
-  if (!name || !phone || !date || !selected) {
-    msg.style.color = '#b91c1c';
-    msg.textContent = 'Бүх талбаруудыг бөглөнө үү.';
-    return;
-  }
+      if (!name || !phone || !date || !selected) { msg.style.color = '#b91c1c'; msg.textContent = 'Бүх талбаруудыг бөглөнө үү.'; return; }
 
-  const selectedTime = selected.textContent;
+      const selectedTime = selected.textContent;
 
-  // 🔹 1. Тухайн утасны өмнөх захиалгуудыг шалгана
-  const snapshot = await db.collection('bookings')
-    .where('phone', '==', phone)
-    .get();
+      const prev = await db.collection('bookings').where('phone', '==', phone).get();
+      let hasActiveBooking = false;
+      prev.forEach(doc => {
+        const data = doc.data();
+        if (!data.date || !data.time) return;
+        if (new Date(`${data.date}T${data.time}`) > new Date()) hasActiveBooking = true;
+      });
+      if (hasActiveBooking) { msg.style.color = '#b91c1c'; msg.textContent = 'Таны өмнөх цагийн захиалга хараахан дуусаагүй байна.'; return; }
 
-  let hasActiveBooking = false;
+      const dup = await db.collection('bookings').where('date', '==', date).where('time', '==', selectedTime).get();
+      if (!dup.empty) { msg.style.color = '#b91c1c'; msg.textContent = 'Энэ цаг аль хэдийн захиалагдсан байна.'; return; }
 
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    if (!data.date || !data.time) return;
-
-    // Өмнөх захиалгын огноо, цагийг Date болгон хөрвүүлнэ
-    const bookingDateTime = new Date(`${data.date}T${data.time}`);
-    const now = new Date();
-
-    // Хэрэв өмнөх цаг нь одооноос хойш бол -> идэвхтэй байна гэж үзнэ
-    if (bookingDateTime > now) {
-      hasActiveBooking = true;
-    }
-  });
-
-  // 🔹 2. Хэрэв идэвхтэй захиалга байвал
-  if (hasActiveBooking) {
-    msg.style.color = '#b91c1c';
-    msg.textContent = 'Таны өмнөх цагийн захиалга хараахан дуусаагүй байна. Өмнөх цаг өнгөрсний дараа дахин захиална уу.';
-    return;
-  }
-
-  // 🔹 3. Давхардсан цаг шалгах
-  const q = await db.collection('bookings')
-    .where('date', '==', date)
-    .where('time', '==', selectedTime)
-    .get();
-
-  if (!q.empty) {
-    msg.style.color = '#b91c1c';
-    msg.textContent = 'Энэ цаг аль хэдийн захиалагдсан байна.';
-    return;
-  }
-
-  // 🔹 4. Firestore-д хадгалах
-  try {
-    await db.collection('bookings').add({
-      name,
-      phone,
-      grade,
-      group,
-      issue,
-      date,
-      time: selectedTime,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      try {
+        await db.collection('bookings').add({
+          name, phone, grade, group, issue, date, time: selectedTime,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        localStorage.setItem("latestBooking", JSON.stringify({ name, phone, grade, group, issue, date, time: selectedTime }));
+        window.location.href = "success.html";
+      } catch (err) {
+        console.error(err);
+        msg.style.color = '#b91c1c'; msg.textContent = 'Алдаа гарлаа. Та дахин оролдоно уу.';
+      }
     });
-
-    // ✅ LocalStorage-д хадгалж success хуудас руу үсэрнэ
-    const bookingData = { name, phone, grade, group, issue, date, time: selectedTime };
-    localStorage.setItem("latestBooking", JSON.stringify(bookingData));
-    window.location.href = "success.html";
-
-  } catch (err) {
-    console.error(err);
-    msg.style.color = '#b91c1c';
-    msg.textContent = 'Алдаа гарлаа. Та дахин оролдоно уу.';
-  }
-});
-
   </script>
 </body>
+
 </html>
